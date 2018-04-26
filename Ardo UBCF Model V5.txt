@@ -1,0 +1,37 @@
+setwd("K:/MI Reports/01 - Ardo UK/Ardo UK Product Recommendation Model/Data")
+#look at using XLConnect package to link straight to excel workbook
+library(recommenderlab)
+library(xlsx)
+library(tidyr)
+library(Matrix)
+#library(stringer)
+data=read.csv("WS1 & WS2 V3.csv",header=TRUE,row.names=1)
+#remove rows where number of purchases is <10
+df=data[rowSums(data[-1])>=10,]
+df<-as.matrix(df)
+data.matrix=as(df,"binaryRatingMatrix")
+#image(data.matrix)
+model=Recommender(data.matrix,method="UBCF")
+predictions<-predict(model,data.matrix,n=5)
+set.seed(100)
+evaluation<-evaluationScheme(data.matrix,method="split",train=0.5,given=5)
+Rec.ubcf <- Recommender(getData(evaluation, "train"), "UBCF")
+predict.ubcf<-predict(Rec.ubcf,getData(evaluation,"known"),type="topNList")
+pred.ubcfratings<-predict(Rec.ubcf,getData(evaluation,"known"),type="ratings")
+error.ubcf<-calcPredictionAccuracy(predict.ubcf,getData(evaluation,"unknown"),given=5)
+setwd("K:/MI Reports/01 - Ardo UK/Ardo UK Product Recommendation Model/Output Data")
+wsratings<-as(pred.ubcfratings,"matrix")
+ratingrows<-c(evaluation@runsTrain)
+#colnames(wsratings)[1]<-"CustomerNumber"
+customername<-"CustomerName"
+colnames2<-c(wsratings[0,2:ncol(wsratings)])
+colnames3<-c(customername,colnames2)
+colnames(wsratings)[1:ncol(wsratings)]<-colnames3
+wsratings[2:nrow(wsratings$CustomerNumber),1]<-ratingrows
+#write.csv(wsratings,"wsratings.csv")
+
+
+#predictionmatrix<-predict(Rec.ubcf,getData(evaluation,"known"),type="ratingMatrix")
+
+#predictions.3<-predict(model,data.matrix[3,],type="ratings") example to print predicted ratings for user3
+
