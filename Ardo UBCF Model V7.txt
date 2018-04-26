@@ -21,13 +21,9 @@ pred.ubcfratings<-predict(Rec.ubcf,getData(evaluation,"known"),type="ratings")
 error.ubcf<-calcPredictionAccuracy(predict.ubcf,getData(evaluation,"unknown"),given=5)
 setwd("K:/MI Reports/01 - Ardo UK/Ardo UK Product Recommendation Model/Output Data")
 wsratings<-as(pred.ubcfratings,"matrix")
-customerID<-c(0,evaluation@runsTrain[[1]])
+customerID<-c(evaluation@runsTrain[[1]])
 wsratings<-cbind(customerID,wsratings)
 
 #write.csv(wsratings,"wsratings.csv")
-
-
-#predictionmatrix<-predict(Rec.ubcf,getData(evaluation,"known"),type="ratingMatrix")
-
 #predictions.3<-predict(model,data.matrix[3,],type="ratings") example to print predicted ratings for user3
 
